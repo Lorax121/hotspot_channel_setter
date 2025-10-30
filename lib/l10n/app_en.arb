@@ -1,0 +1,44 @@
+{
+    "@@locale": "en",
+    "appName": "WiFi Channel Setter",
+    "errorOccurred": "An error occurred",
+    "tryAgain": "Try Again",
+    "band2_4GHz": "2.4 GHz",
+    "band5GHz": "5 GHz",
+    "selectChannelHint": "Select a channel",
+    "availableChannelsLabel": "Available Channels",
+    "channelDropdownItem": "Channel {channelNumber} ({frequency} MHz)",
+    "@channelDropdownItem": {
+        "description": "Text for a single item in the channel dropdown",
+        "placeholders": {
+            "channelNumber": {
+                "type": "int"
+            },
+            "frequency": {
+                "type": "int"
+            }
+        }
+    },
+    "showAllChannelsTitle": "Show all channels",
+    "showAllChannelsSubtitle": "Including DFS and disabled channels",
+    "applyButton": "Apply",
+    "applySuccessSnackbar": "Channel {channelNumber} ({frequency} MHz) applied successfully!",
+    "@applySuccessSnackbar": {
+        "placeholders": {
+            "channelNumber": {
+                "type": "int"
+            },
+            "frequency": {
+                "type": "int"
+            }
+        }
+    },
+    "errorSnackbar": "Error: {errorMessage}",
+    "@errorSnackbar": {
+        "placeholders": {
+            "errorMessage": {
+                "type": "String"
+            }
+        }
+    }
+}

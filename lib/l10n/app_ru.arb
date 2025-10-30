@@ -1,0 +1,16 @@
+{
+    "@@locale": "ru",
+    "appName": "Настройка канала WiFi",
+    "errorOccurred": "Произошла ошибка",
+    "tryAgain": "Попробовать снова",
+    "band2_4GHz": "2.4 ГГц",
+    "band5GHz": "5 ГГц",
+    "selectChannelHint": "Выберите канал",
+    "availableChannelsLabel": "Доступные каналы",
+    "channelDropdownItem": "Канал {channelNumber} ({frequency} МГц)",
+    "showAllChannelsTitle": "Показать все каналы",
+    "showAllChannelsSubtitle": "Включая каналы с DFS и отключенные",
+    "applyButton": "Применить",
+    "applySuccessSnackbar": "Канал {channelNumber} ({frequency} МГц) успешно применен!",
+    "errorSnackbar": "Ошибка: {errorMessage}"
+}
