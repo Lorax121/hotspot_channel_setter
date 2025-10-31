@@ -44,6 +44,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get applyButton => 'Применить';
 
   @override
+  String get applyingButton => 'Применение...';
+
+  @override
   String applySuccessSnackbar(int channelNumber, int frequency) {
     return 'Канал $channelNumber ($frequency МГц) успешно применен!';
   }
@@ -52,4 +55,52 @@ class AppLocalizationsRu extends AppLocalizations {
   String errorSnackbar(String errorMessage) {
     return 'Ошибка: $errorMessage';
   }
+
+  @override
+  String get quickSelectLabel => 'Быстрый выбор:';
+
+  @override
+  String quickSelectChipLabel(String bandName, int frequency) {
+    return '$bandName: $frequency МГц';
+  }
+
+  @override
+  String channelNotFoundSnackbar(int frequency) {
+    return 'Канал $frequency МГц не найден в текущем списке. Попробуйте включить \'Показать все каналы\'.';
+  }
+
+  @override
+  String get applyFailedButNoErrorSnackbar =>
+      'Команда не выполнилась, но не вернула ошибку.';
+
+  @override
+  String get adbError_generic =>
+      'Не удалось выполнить команду. Проверьте root-доступ.';
+
+  @override
+  String get adbError_timeout => 'Таймаут команды. Устройство не отвечает.';
+
+  @override
+  String get adbError_permissionDenied =>
+      'Доступ запрещен. Предоставьте root-права приложению.';
+
+  @override
+  String get adbError_iwNotFound => 'Команда \'iw\' не найдена на устройстве.';
+
+  @override
+  String get adbError_cmdWifiNotFound =>
+      'Команда \'cmd wifi\' не поддерживается на этом устройстве.';
+
+  @override
+  String adbError_invalidFrequency(int frequency) {
+    return 'Неверная частота $frequency МГц. Устройство не поддерживает этот канал.';
+  }
+
+  @override
+  String get adbError_noResult =>
+      'Команда не вернула результата. Проверьте root-доступ.';
+
+  @override
+  String get adbError_badResult =>
+      'Команда вернула пустой или некорректный результат. Проверьте поддержку \'iw\' на устройстве.';
 }

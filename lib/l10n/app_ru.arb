@@ -8,9 +8,31 @@
     "selectChannelHint": "Выберите канал",
     "availableChannelsLabel": "Доступные каналы",
     "channelDropdownItem": "Канал {channelNumber} ({frequency} МГц)",
+    "@channelDropdownItem": { "placeholders": { "channelNumber": { "type": "int" }, "frequency": { "type": "int" } } },
     "showAllChannelsTitle": "Показать все каналы",
     "showAllChannelsSubtitle": "Включая каналы с DFS и отключенные",
     "applyButton": "Применить",
+    "applyingButton": "Применение...",
     "applySuccessSnackbar": "Канал {channelNumber} ({frequency} МГц) успешно применен!",
-    "errorSnackbar": "Ошибка: {errorMessage}"
+    "@applySuccessSnackbar": { "placeholders": { "channelNumber": { "type": "int" }, "frequency": { "type": "int" } } },
+    "errorSnackbar": "Ошибка: {errorMessage}",
+    "@errorSnackbar": { "placeholders": { "errorMessage": { "type": "String" } } },
+
+    "quickSelectLabel": "Быстрый выбор:",
+    "quickSelectChipLabel": "{bandName}: {frequency} МГц",
+    "@quickSelectChipLabel": { "placeholders": { "bandName": { "type": "String" }, "frequency": { "type": "int" } } },
+
+    "channelNotFoundSnackbar": "Канал {frequency} МГц не найден в текущем списке. Попробуйте включить 'Показать все каналы'.",
+    "@channelNotFoundSnackbar": { "placeholders": { "frequency": { "type": "int" } } },
+    "applyFailedButNoErrorSnackbar": "Команда не выполнилась, но не вернула ошибку.",
+
+    "adbError_generic": "Не удалось выполнить команду. Проверьте root-доступ.",
+    "adbError_timeout": "Таймаут команды. Устройство не отвечает.",
+    "adbError_permissionDenied": "Доступ запрещен. Предоставьте root-права приложению.",
+    "adbError_iwNotFound": "Команда 'iw' не найдена на устройстве.",
+    "adbError_cmdWifiNotFound": "Команда 'cmd wifi' не поддерживается на этом устройстве.",
+    "adbError_invalidFrequency": "Неверная частота {frequency} МГц. Устройство не поддерживает этот канал.",
+    "@adbError_invalidFrequency": { "placeholders": { "frequency": { "type": "int" } } },
+    "adbError_noResult": "Команда не вернула результата. Проверьте root-доступ.",
+    "adbError_badResult": "Команда вернула пустой или некорректный результат. Проверьте поддержку 'iw' на устройстве."
 }

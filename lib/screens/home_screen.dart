@@ -1,13 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wifi_channel_setter/l10n/app_localizations.dart';
-
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../models/wifi_channel.dart';
+import '../services/adb_exception.dart';
 import '../services/adb_service.dart';
 import '../services/iw_parser.dart';
 import '../services/locale_provider.dart';
 import '../services/settings_service.dart';
-import '../services/wifi_scanner_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,21 +20,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final AdbService _adbService = AdbService();
   final SettingsService _settingsService = SettingsService();
-  final WifiScannerService _wifiScannerService = WifiScannerService();
 
   bool _isLoading = true;
   String? _errorMessage;
+  bool _isApplying = false;
+
   int _selectedBand = 1;
   bool _showAllChannels = false;
-  
-  bool _analyzeChannels = false;
-  bool _isScanning = false;
-  Map<int, int> _channelUsage = {};
-
   Map<int, List<WiFiChannel>> _allChannels = {};
   List<WiFiChannel> _visibleChannels = [];
   WiFiChannel? _selectedChannel;
-
   int? _savedChannelFreqBand1;
   int? _savedChannelFreqBand2;
 
@@ -61,8 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
       final iwOutput = await _adbService.getIwList();
       _allChannels = IwParser.parse(iwOutput);
       _updateVisibleChannels();
+    } on AdbException catch (e) {
+      if (mounted) {
+        final S = AppLocalizations.of(context)!;
+        setState(() { _errorMessage = _getLocalizedError(e, S); });
+      }
     } catch (e) {
-      if (mounted) setState(() { _errorMessage = e.toString(); });
+      if (mounted) {
+        setState(() { _errorMessage = e.toString(); });
+      }
     }
   }
 
@@ -71,81 +74,28 @@ class _HomeScreenState extends State<HomeScreen> {
     _visibleChannels = _showAllChannels
         ? channelsForBand
         : channelsForBand.where((c) => c.isAllowedByDefault).toList();
-
+    
     _selectedChannel = null;
+    
     int? savedFreq = _selectedBand == 1 ? _savedChannelFreqBand1 : _savedChannelFreqBand2;
 
     if (savedFreq != null) {
-      final matchingChannels = _visibleChannels.where((c) => c.frequency == savedFreq);
-      if (matchingChannels.isNotEmpty) {
-        _selectedChannel = matchingChannels.first;
-      }
-    }
-  }
-
-  Future<void> _onAnalyzeChannelsChanged(bool value) async {
-    setState(() => _analyzeChannels = value);
-
-    if (_analyzeChannels) {
-      final hasPermissions = await _wifiScannerService.requestPermissions();
-      if (!hasPermissions) {
-        if (mounted) setState(() => _analyzeChannels = false);
-        _showPermissionDeniedDialog();
-        return;
-      }
-
-      await Future.delayed(const Duration(milliseconds: 500)); 
-
-      setState(() => _isScanning = true);
       try {
-        final usage = await _wifiScannerService.getChannelUsage();
-        if(mounted) setState(() => _channelUsage = usage);
+        _selectedChannel = _visibleChannels.firstWhere((c) => c.frequency == savedFreq);
       } catch (e) {
-        if(mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.orange,
-          ));
-          setState(() => _analyzeChannels = false);
-        }
-      } finally {
-        if(mounted) setState(() => _isScanning = false);
+        _selectedChannel = null;
       }
-    } else {
-      if(mounted) setState(() => _channelUsage.clear());
     }
   }
 
-  void _showPermissionDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Разрешение отклонено'),
-        content: const Text(
-          'Для анализа загруженности каналов приложению нужен доступ к геолокации. '
-          'Это стандартное требование Android для сканирования Wi-Fi сетей.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+  void _onBandChanged(int? band) {
+    if (band == null || band == _selectedBand) return;
+    setState(() {
+      _selectedBand = band;
+      _settingsService.saveLastBand(band);
+      _updateVisibleChannels();
+    });
   }
-
-void _onBandChanged(int? band) {
-  if (band == null) return;
-  setState(() {
-    _selectedBand = band;
-    _updateVisibleChannels();
-    
-    if (_analyzeChannels) {
-      _onAnalyzeChannelsChanged(true);
-    }
-  });
-}
 
   void _onShowAllChannelsChanged(bool value) {
     setState(() {
@@ -155,12 +105,80 @@ void _onBandChanged(int? band) {
   }
 
   Future<void> _applyChannel() async {
-    if (_selectedChannel == null) return;
+    if (_selectedChannel == null || _isApplying) return;
+
+    setState(() => _isApplying = true);
+    final S = AppLocalizations.of(context)!;
+
+    try {
+      final success = await _adbService.setChannel(_selectedChannel!.frequency);
+      
+      if (success && mounted) {
+        await _settingsService.saveChannelForBand(_selectedBand, _selectedChannel!.frequency);
+        await _settingsService.saveLastBand(_selectedBand);
+        await _loadSettings(); 
+        
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(S.applySuccessSnackbar(_selectedChannel!.channelNumber, _selectedChannel!.frequency)),
+          backgroundColor: Colors.green.shade700,
+        ));
+      } else if (!success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(S.applyFailedButNoErrorSnackbar),
+          backgroundColor: Colors.orange.shade800,
+        ));
+      }
+    } on AdbException catch (e) {
+      if(mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(_getLocalizedError(e, S)),
+          backgroundColor: Colors.red.shade700,
+        ));
+      }
+    } catch (e) {
+      if(mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(S.errorSnackbar(e.toString())),
+          backgroundColor: Colors.red.shade700,
+        ));
+      }
+    } finally {
+      if(mounted) setState(() => _isApplying = false);
+    }
+  }
+  
+  void _selectSavedChannel(int frequency) {
+    try {
+      final channelToSelect = _visibleChannels.firstWhere((c) => c.frequency == frequency);
+      setState(() => _selectedChannel = channelToSelect);
+    } catch (e) {
+      final S = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(S.channelNotFoundSnackbar(frequency)),
+      ));
+    }
+  }
+
+  String _getLocalizedError(AdbException e, AppLocalizations S) {
+    switch (e.type) {
+      case AdbErrorType.timeout: return S.adbError_timeout;
+      case AdbErrorType.permissionDenied: return S.adbError_permissionDenied;
+      case AdbErrorType.iwNotFound: return S.adbError_iwNotFound;
+      case AdbErrorType.cmdWifiNotFound: return S.adbError_cmdWifiNotFound;
+      case AdbErrorType.invalidFrequency:
+        final freq = e.params?['frequency'] ?? 0;
+        return S.adbError_invalidFrequency(freq);
+      case AdbErrorType.noResult: return S.adbError_noResult;
+      case AdbErrorType.badResult: return S.adbError_badResult;
+      case AdbErrorType.generic:
+      default: return S.adbError_generic;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final S = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(S.appName),
@@ -220,61 +238,46 @@ void _onBandChanged(int? band) {
             ButtonSegment(value: 2, label: Text(S.band5GHz), icon: const Icon(Icons.network_wifi)),
           ],
           selected: {_selectedBand},
-          onSelectionChanged: (Set<int> newSelection) {
-            _onBandChanged(newSelection.first);
-          },
+          onSelectionChanged: (Set<int> newSelection) => _onBandChanged(newSelection.first),
         ),
           const SizedBox(height: 20),
-          DropdownButtonFormField<WiFiChannel>(
+
+          DropdownButtonFormField2<WiFiChannel>(
             value: _selectedChannel,
-            hint: Text(S.selectChannelHint),
             isExpanded: true,
-            menuMaxHeight: MediaQuery.of(context).size.height * 0.4,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              border: const OutlineInputBorder(),
+              labelText: S.availableChannelsLabel,
+            ),
+            hint: Text(
+              S.selectChannelHint,
+              style: TextStyle(fontSize: 14, color: Theme.of(context).hintColor),
+            ),
             items: _visibleChannels.map((channel) {
-              final usageCount = _channelUsage[channel.channelNumber];
-              return DropdownMenuItem(
+              return DropdownMenuItem<WiFiChannel>(
                 value: channel,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        S.channelDropdownItem(channel.channelNumber, channel.frequency),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    if (_analyzeChannels && !_isScanning)
-                      Row(
-                        children: [
-                          if (usageCount != null && usageCount > 0) ...[
-                            Icon(Icons.wifi_tethering, color: Colors.orange.shade600, size: 20),
-                            const SizedBox(width: 4),
-                            Text('$usageCount', style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.bold)),
-                          ] else
-                            const Icon(Icons.wifi_tethering_off, color: Colors.green, size: 20),
-                        ],
-                      ),
-                    if (_isScanning) const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
-                  ],
-                ),
+                child: Text(S.channelDropdownItem(channel.channelNumber, channel.frequency)),
               );
             }).toList(),
             onChanged: (channel) => setState(() => _selectedChannel = channel),
-            decoration: InputDecoration(
-              labelText: S.availableChannelsLabel,
-              border: const OutlineInputBorder(),
+            
+            buttonStyleData: const ButtonStyleData(
+              height: 60,
+              padding: EdgeInsets.only(left: 0, right: 10),
+            ),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: MediaQuery.of(context).size.height * 0.4, 
+              offset: const Offset(0, -5), 
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
+
           const SizedBox(height: 10),
           
-          SwitchListTile(
-            title: const Text('Анализировать загруженность'),
-            subtitle: _isScanning
-                ? const LinearProgressIndicator()
-                : const Text('Показать, какие каналы заняты'),
-            value: _analyzeChannels,
-            onChanged: _isScanning ? null : _onAnalyzeChannelsChanged,
-          ),
+          _buildSavedChannelBadges(S),
 
           SwitchListTile(
             title: Text(S.showAllChannelsTitle),
@@ -284,13 +287,52 @@ void _onBandChanged(int? band) {
           ),
           const Spacer(),
           ElevatedButton.icon(
-            onPressed: _selectedChannel == null ? null : _applyChannel,
-            icon: const Icon(Icons.check_circle_outline),
-            label: Text(S.applyButton),
+            onPressed: _selectedChannel == null || _isApplying ? null : _applyChannel,
+            icon: _isApplying
+              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+              : const Icon(Icons.check_circle_outline),
+            label: Text(_isApplying ? S.applyingButton : S.applyButton),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               textStyle: const TextStyle(fontSize: 18),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSavedChannelBadges(AppLocalizations S) {
+    if (_savedChannelFreqBand1 == null && _savedChannelFreqBand2 == null) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            S.quickSelectLabel, 
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 4.0,
+            children: [
+              if (_savedChannelFreqBand1 != null)
+                ActionChip(
+                  avatar: const Icon(Icons.network_wifi_3_bar, size: 18),
+                  label: Text(S.quickSelectChipLabel(S.band2_4GHz, _savedChannelFreqBand1!)),
+                  onPressed: () => _selectSavedChannel(_savedChannelFreqBand1!),
+                ),
+              if (_savedChannelFreqBand2 != null)
+                ActionChip(
+                  avatar: const Icon(Icons.network_wifi, size: 18),
+                  label: Text(S.quickSelectChipLabel(S.band5GHz, _savedChannelFreqBand2!)),
+                  onPressed: () => _selectSavedChannel(_savedChannelFreqBand2!),
+                ),
+            ],
           ),
         ],
       ),

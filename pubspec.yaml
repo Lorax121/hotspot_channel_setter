@@ -20,15 +20,20 @@ dependencies:
   intl: ^0.20.2              
   home_widget: ^0.8.1       
   provider: ^6.1.5+1
-  wifi_scan: ^0.4.1+2
-  permission_handler: ^12.0.1
+  dropdown_button2: ^2.3.9
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
 
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21
 
 flutter:
 

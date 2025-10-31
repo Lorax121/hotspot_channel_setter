@@ -8,37 +8,31 @@
     "selectChannelHint": "Select a channel",
     "availableChannelsLabel": "Available Channels",
     "channelDropdownItem": "Channel {channelNumber} ({frequency} MHz)",
-    "@channelDropdownItem": {
-        "description": "Text for a single item in the channel dropdown",
-        "placeholders": {
-            "channelNumber": {
-                "type": "int"
-            },
-            "frequency": {
-                "type": "int"
-            }
-        }
-    },
+    "@channelDropdownItem": { "placeholders": { "channelNumber": { "type": "int" }, "frequency": { "type": "int" } } },
     "showAllChannelsTitle": "Show all channels",
     "showAllChannelsSubtitle": "Including DFS and disabled channels",
     "applyButton": "Apply",
+    "applyingButton": "Applying...",
     "applySuccessSnackbar": "Channel {channelNumber} ({frequency} MHz) applied successfully!",
-    "@applySuccessSnackbar": {
-        "placeholders": {
-            "channelNumber": {
-                "type": "int"
-            },
-            "frequency": {
-                "type": "int"
-            }
-        }
-    },
+    "@applySuccessSnackbar": { "placeholders": { "channelNumber": { "type": "int" }, "frequency": { "type": "int" } } },
     "errorSnackbar": "Error: {errorMessage}",
-    "@errorSnackbar": {
-        "placeholders": {
-            "errorMessage": {
-                "type": "String"
-            }
-        }
-    }
+    "@errorSnackbar": { "placeholders": { "errorMessage": { "type": "String" } } },
+
+    "quickSelectLabel": "Quick select:",
+    "quickSelectChipLabel": "{bandName}: {frequency} MHz",
+    "@quickSelectChipLabel": { "placeholders": { "bandName": { "type": "String" }, "frequency": { "type": "int" } } },
+
+    "channelNotFoundSnackbar": "Channel {frequency} MHz not found in the current list. Try enabling 'Show all channels'.",
+    "@channelNotFoundSnackbar": { "placeholders": { "frequency": { "type": "int" } } },
+    "applyFailedButNoErrorSnackbar": "The command did not execute but returned no error.",
+
+    "adbError_generic": "Failed to execute command. Please check root access.",
+    "adbError_timeout": "Command timed out. The device may be unresponsive.",
+    "adbError_permissionDenied": "Permission denied. Please grant root access to the application.",
+    "adbError_iwNotFound": "The 'iw' command was not found on this device.",
+    "adbError_cmdWifiNotFound": "The 'cmd wifi' command is not supported by this device.",
+    "adbError_invalidFrequency": "Invalid frequency {frequency} MHz. The device does not support this channel.",
+    "@adbError_invalidFrequency": { "placeholders": { "frequency": { "type": "int" } } },
+    "adbError_noResult": "The command returned no result. Check root access.",
+    "adbError_badResult": "The command returned an empty or invalid result. Check 'iw' support on the device."
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wifi_channel_setter/l10n/app_localizations.dart'; 
+import 'package:wifi_channel_setter/l10n/app_localizations.dart';
 import 'screens/home_screen.dart';
 import 'services/locale_provider.dart';
 
@@ -19,12 +19,10 @@ class MyApp extends StatelessWidget {
       child: Consumer<LocaleProvider>(
         builder: (context, provider, child) {
           return MaterialApp(
-            title: 'WiFi Channel Setter', 
-            
-            locale: provider.locale, 
+            title: 'WiFi Channel Setter',
+            locale: provider.locale,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
               useMaterial3: true,

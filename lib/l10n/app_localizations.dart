@@ -140,7 +140,7 @@ abstract class AppLocalizations {
   /// **'Available Channels'**
   String get availableChannelsLabel;
 
-  /// Text for a single item in the channel dropdown
+  /// No description provided for @channelDropdownItem.
   ///
   /// In en, this message translates to:
   /// **'Channel {channelNumber} ({frequency} MHz)'**
@@ -164,6 +164,12 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get applyButton;
 
+  /// No description provided for @applyingButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Applying...'**
+  String get applyingButton;
+
   /// No description provided for @applySuccessSnackbar.
   ///
   /// In en, this message translates to:
@@ -175,6 +181,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: {errorMessage}'**
   String errorSnackbar(String errorMessage);
+
+  /// No description provided for @quickSelectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick select:'**
+  String get quickSelectLabel;
+
+  /// No description provided for @quickSelectChipLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{bandName}: {frequency} MHz'**
+  String quickSelectChipLabel(String bandName, int frequency);
+
+  /// No description provided for @channelNotFoundSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel {frequency} MHz not found in the current list. Try enabling \'Show all channels\'.'**
+  String channelNotFoundSnackbar(int frequency);
+
+  /// No description provided for @applyFailedButNoErrorSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'The command did not execute but returned no error.'**
+  String get applyFailedButNoErrorSnackbar;
+
+  /// No description provided for @adbError_generic.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to execute command. Please check root access.'**
+  String get adbError_generic;
+
+  /// No description provided for @adbError_timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Command timed out. The device may be unresponsive.'**
+  String get adbError_timeout;
+
+  /// No description provided for @adbError_permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission denied. Please grant root access to the application.'**
+  String get adbError_permissionDenied;
+
+  /// No description provided for @adbError_iwNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The \'iw\' command was not found on this device.'**
+  String get adbError_iwNotFound;
+
+  /// No description provided for @adbError_cmdWifiNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The \'cmd wifi\' command is not supported by this device.'**
+  String get adbError_cmdWifiNotFound;
+
+  /// No description provided for @adbError_invalidFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid frequency {frequency} MHz. The device does not support this channel.'**
+  String adbError_invalidFrequency(int frequency);
+
+  /// No description provided for @adbError_noResult.
+  ///
+  /// In en, this message translates to:
+  /// **'The command returned no result. Check root access.'**
+  String get adbError_noResult;
+
+  /// No description provided for @adbError_badResult.
+  ///
+  /// In en, this message translates to:
+  /// **'The command returned an empty or invalid result. Check \'iw\' support on the device.'**
+  String get adbError_badResult;
 }
 
 class _AppLocalizationsDelegate
