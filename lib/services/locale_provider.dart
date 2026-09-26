@@ -11,16 +11,21 @@ class LocaleProvider with ChangeNotifier {
     _loadLocale();
   }
 
-  void _loadLocale() async {
+  Future<void> _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final langCode = prefs.getString(_keyLocale);
-    if (langCode != null) {
-      _locale = Locale(langCode);
-      notifyListeners();
-    }
+    _locale = langCode == null ? _defaultLocale() : Locale(langCode);
+    notifyListeners();
   }
 
-  void setLocale(Locale locale) async {
+  Locale _defaultLocale() {
+    final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    return systemLocale.languageCode == 'ru'
+        ? const Locale('ru')
+        : const Locale('en');
+  }
+
+  Future<void> setLocale(Locale locale) async {
     _locale = locale;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyLocale, locale.languageCode);

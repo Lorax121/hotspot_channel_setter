@@ -2,10 +2,7 @@ import '../models/wifi_channel.dart';
 
 class IwParser {
   static Map<int, List<WiFiChannel>> parse(String iwOutput) {
-    final Map<int, List<WiFiChannel>> bands = {
-      1: [], 
-      2: [], 
-    };
+    final Map<int, List<WiFiChannel>> bands = {1: [], 2: []};
 
     final bandRegex = RegExp(r'Band (\d):');
     final matches = bandRegex.allMatches(iwOutput);
@@ -15,8 +12,10 @@ class IwParser {
       final bandNumber = int.parse(match.group(1)!);
 
       final startIndex = match.end;
-      final endIndex = (i + 1 < matches.length) ? matches.elementAt(i + 1).start : iwOutput.length;
-      
+      final endIndex = (i + 1 < matches.length)
+          ? matches.elementAt(i + 1).start
+          : iwOutput.length;
+
       final bandContent = iwOutput.substring(startIndex, endIndex);
 
       final freqIndex = bandContent.indexOf('Frequencies:');
@@ -28,11 +27,11 @@ class IwParser {
 
       for (final line in frequenciesBlock.split('\n')) {
         final lineMatch = lineRegex.firstMatch(line);
-        
+
         if (lineMatch != null) {
           final frequency = int.parse(lineMatch.group(1)!);
           final channelNumber = int.parse(lineMatch.group(2)!);
-          
+
           final isDisabled = line.contains('(disabled)');
           final hasRadarDetection = line.contains('(radar detection)');
 
@@ -42,7 +41,7 @@ class IwParser {
             isDisabled: isDisabled,
             hasRadarDetection: hasRadarDetection,
           );
-          
+
           if (bands.containsKey(bandNumber)) {
             bands[bandNumber]!.add(channel);
           }

@@ -1,8 +1,8 @@
 class WiFiChannel {
-  final int frequency; 
-  final int channelNumber; 
-  final bool isDisabled; 
-  final bool hasRadarDetection; 
+  final int frequency;
+  final int channelNumber;
+  final bool isDisabled;
+  final bool hasRadarDetection;
 
   WiFiChannel({
     required this.frequency,

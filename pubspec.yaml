@@ -2,7 +2,7 @@ name: wifi_channel_setter
 description: "A new Flutter project."
 publish_to: 'none' 
 
-version: 1.0.0+1
+version: 1.1.0+11
 
 environment:
   sdk: ^3.9.2
@@ -18,7 +18,6 @@ dependencies:
   process_run: ^1.2.4      
   shared_preferences: ^2.5.3 
   intl: ^0.20.2              
-  home_widget: ^0.8.1       
   provider: ^6.1.5+1
   dropdown_button2: ^2.3.9
   

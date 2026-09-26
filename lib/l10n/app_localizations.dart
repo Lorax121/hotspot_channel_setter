@@ -101,19 +101,19 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'WiFi Channel Setter'**
+  /// **'Channel Setter'**
   String get appName;
 
   /// No description provided for @errorOccurred.
   ///
   /// In en, this message translates to:
-  /// **'An error occurred'**
+  /// **'Something went wrong'**
   String get errorOccurred;
 
   /// No description provided for @tryAgain.
   ///
   /// In en, this message translates to:
-  /// **'Try Again'**
+  /// **'Try again'**
   String get tryAgain;
 
   /// No description provided for @band2_4GHz.
@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @availableChannelsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Available Channels'**
+  /// **'Available channels'**
   String get availableChannelsLabel;
 
   /// No description provided for @channelDropdownItem.
@@ -155,7 +155,7 @@ abstract class AppLocalizations {
   /// No description provided for @showAllChannelsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Including DFS and disabled channels'**
+  /// **'Including DFS and disabled ones'**
   String get showAllChannelsSubtitle;
 
   /// No description provided for @applyButton.
@@ -167,14 +167,32 @@ abstract class AppLocalizations {
   /// No description provided for @applyingButton.
   ///
   /// In en, this message translates to:
-  /// **'Applying...'**
+  /// **'Applying…'**
   String get applyingButton;
 
-  /// No description provided for @applySuccessSnackbar.
+  /// No description provided for @applySuccessPersistent.
   ///
   /// In en, this message translates to:
-  /// **'Channel {channelNumber} ({frequency} MHz) applied successfully!'**
-  String applySuccessSnackbar(int channelNumber, int frequency);
+  /// **'Channel {channelNumber} ({frequency} MHz) saved and will be used after a reboot.'**
+  String applySuccessPersistent(int channelNumber, int frequency);
+
+  /// No description provided for @applySuccessSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel {channelNumber} ({frequency} MHz) applied until the next reboot.'**
+  String applySuccessSession(int channelNumber, int frequency);
+
+  /// No description provided for @applyFormatPersist.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the channel after a reboot'**
+  String get applyFormatPersist;
+
+  /// No description provided for @shizukuPersistHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Shizuku saves the channel in the hotspot settings, so it stays after a reboot.'**
+  String get shizukuPersistHint;
 
   /// No description provided for @errorSnackbar.
   ///
@@ -197,62 +215,290 @@ abstract class AppLocalizations {
   /// No description provided for @channelNotFoundSnackbar.
   ///
   /// In en, this message translates to:
-  /// **'Channel {frequency} MHz not found in the current list. Try enabling \'Show all channels\'.'**
+  /// **'Channel {frequency} MHz is not in the list. Turn on \"Show all channels\".'**
   String channelNotFoundSnackbar(int frequency);
 
   /// No description provided for @applyFailedButNoErrorSnackbar.
   ///
   /// In en, this message translates to:
-  /// **'The command did not execute but returned no error.'**
+  /// **'The command did not run and reported no reason.'**
   String get applyFailedButNoErrorSnackbar;
 
-  /// No description provided for @adbError_generic.
+  /// No description provided for @accessModeShizuku.
   ///
   /// In en, this message translates to:
-  /// **'Failed to execute command. Please check root access.'**
-  String get adbError_generic;
+  /// **'Shizuku'**
+  String get accessModeShizuku;
 
-  /// No description provided for @adbError_timeout.
+  /// No description provided for @accessModeRoot.
   ///
   /// In en, this message translates to:
-  /// **'Command timed out. The device may be unresponsive.'**
-  String get adbError_timeout;
+  /// **'Root'**
+  String get accessModeRoot;
 
-  /// No description provided for @adbError_permissionDenied.
+  /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Permission denied. Please grant root access to the application.'**
-  String get adbError_permissionDenied;
+  /// **'Settings'**
+  String get settingsTitle;
 
-  /// No description provided for @adbError_iwNotFound.
+  /// No description provided for @settingsAccessSection.
   ///
   /// In en, this message translates to:
-  /// **'The \'iw\' command was not found on this device.'**
-  String get adbError_iwNotFound;
+  /// **'Access method'**
+  String get settingsAccessSection;
 
-  /// No description provided for @adbError_cmdWifiNotFound.
+  /// No description provided for @settingsChannelSection.
   ///
   /// In en, this message translates to:
-  /// **'The \'cmd wifi\' command is not supported by this device.'**
-  String get adbError_cmdWifiNotFound;
+  /// **'Hotspot channel'**
+  String get settingsChannelSection;
 
-  /// No description provided for @adbError_invalidFrequency.
+  /// No description provided for @settingsLanguageSection.
   ///
   /// In en, this message translates to:
-  /// **'Invalid frequency {frequency} MHz. The device does not support this channel.'**
-  String adbError_invalidFrequency(int frequency);
+  /// **'Language'**
+  String get settingsLanguageSection;
 
-  /// No description provided for @adbError_noResult.
+  /// No description provided for @settingsResetChannel.
   ///
   /// In en, this message translates to:
-  /// **'The command returned no result. Check root access.'**
-  String get adbError_noResult;
+  /// **'Restore automatic channel'**
+  String get settingsResetChannel;
 
-  /// No description provided for @adbError_badResult.
+  /// No description provided for @resetChannelDone.
   ///
   /// In en, this message translates to:
-  /// **'The command returned an empty or invalid result. Check \'iw\' support on the device.'**
-  String get adbError_badResult;
+  /// **'The device picks the channel again'**
+  String get resetChannelDone;
+
+  /// No description provided for @errorNeedsConnectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No connection to Shizuku'**
+  String get errorNeedsConnectionTitle;
+
+  /// No description provided for @errorNeedsRootTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Root access is required'**
+  String get errorNeedsRootTitle;
+
+  /// No description provided for @connectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connectButton;
+
+  /// No description provided for @requestRootButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Request root'**
+  String get requestRootButton;
+
+  /// No description provided for @checkAgainButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Check again'**
+  String get checkAgainButton;
+
+  /// No description provided for @accessBackendShizuku.
+  ///
+  /// In en, this message translates to:
+  /// **'Shizuku'**
+  String get accessBackendShizuku;
+
+  /// No description provided for @accessBackendRoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Root'**
+  String get accessBackendRoot;
+
+  /// No description provided for @activeAccessBackend.
+  ///
+  /// In en, this message translates to:
+  /// **'Access: {backend}'**
+  String activeAccessBackend(String backend);
+
+  /// No description provided for @commandErrorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not run the system command.'**
+  String get commandErrorGeneric;
+
+  /// No description provided for @commandErrorTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The system did not respond in time.'**
+  String get commandErrorTimeout;
+
+  /// No description provided for @commandErrorPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'The system denied the command.'**
+  String get commandErrorPermissionDenied;
+
+  /// No description provided for @commandErrorNoPrivilegedAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'No access to system commands. Start Shizuku or grant the app root access.'**
+  String get commandErrorNoPrivilegedAccess;
+
+  /// No description provided for @commandErrorRootUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant the app root access in KernelSU or Magisk.'**
+  String get commandErrorRootUnavailable;
+
+  /// No description provided for @commandErrorShizukuNotInstalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Shizuku is not installed. Install and start it.'**
+  String get commandErrorShizukuNotInstalled;
+
+  /// No description provided for @commandErrorShizukuNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'The Shizuku service is not running. Start it and try again.'**
+  String get commandErrorShizukuNotRunning;
+
+  /// No description provided for @commandErrorShizukuPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'The app needs Shizuku permission.'**
+  String get commandErrorShizukuPermissionDenied;
+
+  /// No description provided for @commandErrorShizukuUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'This Shizuku version is not supported. Update Shizuku.'**
+  String get commandErrorShizukuUnsupported;
+
+  /// No description provided for @commandErrorShizukuServiceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect to the Shizuku service. Restart it and try again.'**
+  String get commandErrorShizukuServiceUnavailable;
+
+  /// No description provided for @commandErrorIwNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The iw tool is not available on this device.'**
+  String get commandErrorIwNotFound;
+
+  /// No description provided for @commandErrorCmdWifiNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'The \"cmd wifi\" command is not supported on this device.'**
+  String get commandErrorCmdWifiNotFound;
+
+  /// No description provided for @commandErrorInvalidFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency {frequency} MHz is not available on this device.'**
+  String commandErrorInvalidFrequency(int frequency);
+
+  /// No description provided for @commandErrorNoResult.
+  ///
+  /// In en, this message translates to:
+  /// **'The system command returned no result.'**
+  String get commandErrorNoResult;
+
+  /// No description provided for @commandErrorBadResult.
+  ///
+  /// In en, this message translates to:
+  /// **'The system returned an empty channel list.'**
+  String get commandErrorBadResult;
+
+  /// No description provided for @commandErrorChannelListUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read the channel list ({reason}). On Android 11-13 turn the hotspot on once and try again.'**
+  String commandErrorChannelListUnavailable(String reason);
+
+  /// No description provided for @commandErrorCommandNeedsRoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Android 12+ allows this command only for root. Start Shizuku through root or switch to Root mode.'**
+  String get commandErrorCommandNeedsRoot;
+
+  /// No description provided for @commandErrorChannelNotStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the channel: {reason}.'**
+  String commandErrorChannelNotStored(String reason);
+
+  /// No description provided for @storeReasonRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'the system rejected the new hotspot configuration'**
+  String get storeReasonRejected;
+
+  /// No description provided for @storeReasonUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'the system did not return the hotspot settings'**
+  String get storeReasonUnavailable;
+
+  /// No description provided for @storeReasonUnsupportedAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'saving a channel requires Android 11 or newer'**
+  String get storeReasonUnsupportedAndroid;
+
+  /// No description provided for @storeReasonUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown reason'**
+  String get storeReasonUnknown;
+
+  /// No description provided for @applyUntilRebootAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Until reboot'**
+  String get applyUntilRebootAction;
+
+  /// No description provided for @channelSourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Channel list: {source}'**
+  String channelSourceLabel(String source);
+
+  /// No description provided for @channelSourceIw.
+  ///
+  /// In en, this message translates to:
+  /// **'iw'**
+  String get channelSourceIw;
+
+  /// No description provided for @channelSourceCmdWifi.
+  ///
+  /// In en, this message translates to:
+  /// **'cmd wifi'**
+  String get channelSourceCmdWifi;
+
+  /// No description provided for @channelSourceSoftApCapability.
+  ///
+  /// In en, this message translates to:
+  /// **'dumpsys'**
+  String get channelSourceSoftApCapability;
+
+  /// No description provided for @currentChannelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current channel: {channelNumber} ({frequency} MHz)'**
+  String currentChannelLabel(int channelNumber, int frequency);
+
+  /// No description provided for @currentChannelAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Current channel: auto'**
+  String get currentChannelAuto;
+
+  /// No description provided for @refreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refreshTooltip;
 }
 
 class _AppLocalizationsDelegate
