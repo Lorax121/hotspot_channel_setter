@@ -1,8 +1,8 @@
 name: wifi_channel_setter
-description: "A new Flutter project."
+description: "Sets the Wi-Fi hotspot (SoftAP) channel on Android, with Shizuku or root."
 publish_to: 'none' 
 
-version: 1.1.0+11
+version: 1.1.1+14
 
 environment:
   sdk: ^3.9.2

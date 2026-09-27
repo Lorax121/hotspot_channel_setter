@@ -13,12 +13,12 @@ import 'wifi_command_exception.dart';
 
 class WiFiCommandService {
   WiFiCommandService({
-    WiFiCommandBackend? rootBackend,
+    RootBackend? rootBackend,
     ShizukuBackend? shizukuBackend,
   }) : _rootBackend = rootBackend ?? RootCommandBackend(),
        _shizukuBackend = shizukuBackend ?? ShizukuCommandBackend();
 
-  final WiFiCommandBackend _rootBackend;
+  final RootBackend _rootBackend;
   final ShizukuBackend _shizukuBackend;
 
   WiFiCommandBackend? _activeBackend;
@@ -40,7 +40,10 @@ class WiFiCommandService {
     try {
       return await switch (mode) {
         AccessMode.shizuku => _loadChannelsWithShizuku(),
-        AccessMode.root => _loadChannelsWith(_rootBackend),
+        AccessMode.root => _loadChannelsWith(_rootBackend, [
+          () => _loadFromIw(_rootBackend),
+          () => _loadFromSoftApCapability(_rootBackend),
+        ]),
       };
     } finally {
       _isExecuting = false;
@@ -139,15 +142,16 @@ class WiFiCommandService {
             : WiFiCommandErrorType.shizukuNotInstalled,
       );
     }
-    return _loadChannelsWith(_shizukuBackend);
+    return _loadChannelsWith(_shizukuBackend, [
+      () => _loadFromSystemChannels(_shizukuBackend),
+      () => _loadFromSoftApCapability(_shizukuBackend),
+    ]);
   }
 
-  Future<ChannelList> _loadChannelsWith(WiFiCommandBackend backend) async {
-    final sources = <Future<ChannelList> Function()>[
-      () => _loadFromIw(backend),
-      () => _loadFromCmdWifi(backend),
-      () => _loadFromSoftApCapability(backend),
-    ];
+  Future<ChannelList> _loadChannelsWith(
+    WiFiCommandBackend backend,
+    List<Future<ChannelList> Function()> sources,
+  ) async {
 
     WiFiCommandException? lastFailure;
     for (final source in sources) {
@@ -178,7 +182,7 @@ class WiFiCommandService {
     };
   }
 
-  Future<ChannelList> _loadFromIw(WiFiCommandBackend backend) async {
+  Future<ChannelList> _loadFromIw(RootBackend backend) async {
     final result = await backend.getIwList();
     _validateCommandResult(
       result,
@@ -192,16 +196,20 @@ class WiFiCommandService {
     );
   }
 
-  Future<ChannelList> _loadFromCmdWifi(WiFiCommandBackend backend) async {
+  /// The system route: on Android 12 and newer the hotspot capability, reported by the user
+  /// service. On Android 11 the system may report nothing, and then the user service returns the
+  /// standard channel list, marked with [_standardListMarker] so the screen can warn about it.
+  Future<ChannelList> _loadFromSystemChannels(ShizukuBackend backend) async {
     final result = await backend.getAllowedChannels();
     _validateCommandResult(
       result,
       backend: backend.backend,
       command: _WiFiCommand.allowedChannels,
     );
+    final isStandardList = result.stdout.trimLeft().startsWith(_standardListMarker);
     return _buildChannelList(
       backend,
-      ChannelListSource.cmdWifi,
+      isStandardList ? ChannelListSource.standard : ChannelListSource.system,
       AllowedChannelParser.parse(result.stdout),
     );
   }
@@ -318,3 +326,6 @@ class WiFiCommandService {
 }
 
 enum _WiFiCommand { iwList, allowedChannels, softApCapability, setChannel }
+
+/// Marks the standard channel list the user service returns on Android 11.
+const String _standardListMarker = 'standard';

@@ -194,7 +194,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String commandErrorChannelListUnavailable(String reason) {
-    return 'Could not read the channel list ($reason). On Android 11-13 turn the hotspot on once and try again.';
+    return 'Could not read the channel list ($reason).';
   }
 
   @override
@@ -233,10 +233,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get channelSourceIw => 'iw';
 
   @override
-  String get channelSourceCmdWifi => 'cmd wifi';
+  String get channelSourceSystem => 'system';
 
   @override
   String get channelSourceSoftApCapability => 'dumpsys';
+
+  @override
+  String get channelSourceStandard => 'standard';
+
+  @override
+  String get channelListStandardWarning =>
+      'This Android version does not report the device channels. A standard list is shown, so the hotspot may not support every channel in it.';
 
   @override
   String currentChannelLabel(int channelNumber, int frequency) {

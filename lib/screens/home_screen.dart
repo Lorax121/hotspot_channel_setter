@@ -439,8 +439,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   String _channelSourceLabel(AppLocalizations S, ChannelListSource source) {
     return switch (source) {
       ChannelListSource.iw => S.channelSourceIw,
-      ChannelListSource.cmdWifi => S.channelSourceCmdWifi,
+      ChannelListSource.system => S.channelSourceSystem,
       ChannelListSource.softApCapability => S.channelSourceSoftApCapability,
+      ChannelListSource.standard => S.channelSourceStandard,
     };
   }
 
@@ -573,6 +574,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
           const SizedBox(height: 20),
 
+          if (_channelListSource == ChannelListSource.standard)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                S.channelListStandardWarning,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
           DropdownButtonFormField2<WiFiChannel>(
             value: _selectedChannel,
             isExpanded: true,

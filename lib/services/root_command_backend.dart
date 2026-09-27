@@ -8,7 +8,7 @@ import 'command_result.dart';
 import 'platform_bridge.dart';
 import 'wifi_command_backend.dart';
 
-class RootCommandBackend implements WiFiCommandBackend {
+class RootCommandBackend implements RootBackend {
   RootCommandBackend()
     : _shell = Shell(throwOnError: false, verbose: kDebugMode);
 
@@ -25,12 +25,6 @@ class RootCommandBackend implements WiFiCommandBackend {
   @override
   Future<CommandResult> getIwList() =>
       _run('su -c "iw list"', timeout: const Duration(seconds: 10));
-
-  @override
-  Future<CommandResult> getAllowedChannels() => _run(
-    'su -c "cmd wifi get-allowed-channel"',
-    timeout: const Duration(seconds: 10),
-  );
 
   @override
   Future<CommandResult> getSoftApCapability() => _run(

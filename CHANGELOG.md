@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Shizuku mode reads the channel list from the hotspot capability the system reports, so it works on Android 12 and newer.
+- Android 11: when the system reports no channels, the app offers the standard channel list and warns that the hotspot may not support every channel in it.
+
 ## 1.1.0
 
 - Shizuku support: the channel can be set without root, through the shell identity Shizuku provides.

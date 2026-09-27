@@ -193,7 +193,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String commandErrorChannelListUnavailable(String reason) {
-    return 'Не удалось получить список каналов ($reason). На Android 11–13 включите точку доступа один раз и повторите.';
+    return 'Не удалось получить список каналов ($reason).';
   }
 
   @override
@@ -232,10 +232,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get channelSourceIw => 'iw';
 
   @override
-  String get channelSourceCmdWifi => 'cmd wifi';
+  String get channelSourceSystem => 'система';
 
   @override
   String get channelSourceSoftApCapability => 'dumpsys';
+
+  @override
+  String get channelSourceStandard => 'стандартный';
+
+  @override
+  String get channelListStandardWarning =>
+      'Эта версия Android не сообщает каналы устройства. Показан стандартный список — часть каналов точка доступа может не поддержать.';
 
   @override
   String currentChannelLabel(int channelNumber, int frequency) {

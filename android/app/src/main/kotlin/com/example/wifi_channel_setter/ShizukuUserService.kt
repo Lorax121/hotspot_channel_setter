@@ -11,22 +11,41 @@ import java.util.concurrent.TimeUnit
 
 @Keep
 class ShizukuUserService : IShizukuUserService.Stub {
+    private var context: Context? = null
+
     @Keep
     constructor()
 
     @Keep
-    @Suppress("UNUSED_PARAMETER")
-    constructor(context: Context)
+    constructor(context: Context) {
+        this.context = context
+    }
 
-    override fun getIwList(timeoutMillis: Long): Bundle = execute(
-        command = listOf(findIwExecutable(), "list"),
-        timeoutMillis = timeoutMillis,
-    )
+    override fun getAllowedChannels(timeoutMillis: Long): Bundle {
+        val serviceContext = context
+            ?: return commandResult(
+                exitCode = EXECUTION_ERROR_EXIT_CODE,
+                stderr = "The Android context is unavailable",
+            )
 
-    override fun getAllowedChannels(timeoutMillis: Long): Bundle = execute(
-        command = listOf(CMD_EXECUTABLE, "wifi", "get-allowed-channel"),
-        timeoutMillis = timeoutMillis,
-    )
+        return try {
+            commandResult(
+                exitCode = 0,
+                stdout = SoftApCapabilityReader.describeSupportedChannels(serviceContext),
+            )
+        } catch (error: Throwable) {
+            val cause = error.cause ?: error
+            val fallback = standardChannelList()
+            if (fallback != null) {
+                commandResult(exitCode = 0, stdout = fallback)
+            } else {
+                commandResult(
+                    exitCode = EXECUTION_ERROR_EXIT_CODE,
+                    stderr = cause.message ?: cause.javaClass.simpleName,
+                )
+            }
+        }
+    }
 
     override fun getSoftApCapability(timeoutMillis: Long): Bundle = execute(
         command = listOf(SH_EXECUTABLE, "-c", SOFT_AP_CAPABILITY_COMMAND),
@@ -91,6 +110,22 @@ class ShizukuUserService : IShizukuUserService.Stub {
         timeoutMillis = timeoutMillis,
     )
 
+    /**
+     * Android 11 does not always report the hotspot capabilities and has no other source, so the
+     * channels almost every hotspot-capable device offers are used, marked as the standard list.
+     */
+    private fun standardChannelList(): String? {
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.R) return null
+
+        return buildString {
+            append(STANDARD_LIST_MARKER)
+            append('\n')
+            append(SOFT_AP_CHANNEL_LIST_HEADER)
+            append('\n')
+            append(STANDARD_CHANNEL_FREQUENCIES.joinToString(" "))
+        }
+    }
+
     override fun destroy() {
         System.exit(0)
     }
@@ -134,10 +169,6 @@ class ShizukuUserService : IShizukuUserService.Stub {
         }
     }
 
-    private fun findIwExecutable(): String = IW_EXECUTABLE_CANDIDATES
-        .firstOrNull { File(it).canExecute() }
-        ?: "iw"
-
     private fun commandResult(
         exitCode: Int,
         stdout: String = "",
@@ -168,10 +199,14 @@ class ShizukuUserService : IShizukuUserService.Stub {
         const val EXECUTION_ERROR_EXIT_CODE = 126
         const val STREAM_DRAIN_TIMEOUT_SECONDS = 2L
 
-        val IW_EXECUTABLE_CANDIDATES = listOf(
-            "/system/bin/iw",
-            "/vendor/bin/iw",
-            "/system/xbin/iw",
+        const val STANDARD_LIST_MARKER = "standard"
+        const val SOFT_AP_CHANNEL_LIST_HEADER = "Allowed ch in SAP mode:"
+
+        val STANDARD_CHANNEL_FREQUENCIES = intArrayOf(
+            2412, 2417, 2422, 2427, 2432, 2437, 2442, 2447, 2452, 2457, 2462, 2467, 2472,
+            5180, 5200, 5220, 5240, 5260, 5280, 5300, 5320,
+            5500, 5520, 5540, 5560, 5580, 5600, 5620, 5640, 5660, 5680, 5700,
+            5745, 5765, 5785, 5805, 5825,
         )
 
         val streamExecutor = Executors.newCachedThreadPool()

@@ -413,7 +413,7 @@ abstract class AppLocalizations {
   /// No description provided for @commandErrorChannelListUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'Could not read the channel list ({reason}). On Android 11-13 turn the hotspot on once and try again.'**
+  /// **'Could not read the channel list ({reason}).'**
   String commandErrorChannelListUnavailable(String reason);
 
   /// No description provided for @commandErrorCommandNeedsRoot.
@@ -470,17 +470,29 @@ abstract class AppLocalizations {
   /// **'iw'**
   String get channelSourceIw;
 
-  /// No description provided for @channelSourceCmdWifi.
+  /// No description provided for @channelSourceSystem.
   ///
   /// In en, this message translates to:
-  /// **'cmd wifi'**
-  String get channelSourceCmdWifi;
+  /// **'system'**
+  String get channelSourceSystem;
 
   /// No description provided for @channelSourceSoftApCapability.
   ///
   /// In en, this message translates to:
   /// **'dumpsys'**
   String get channelSourceSoftApCapability;
+
+  /// No description provided for @channelSourceStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'standard'**
+  String get channelSourceStandard;
+
+  /// No description provided for @channelListStandardWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This Android version does not report the device channels. A standard list is shown, so the hotspot may not support every channel in it.'**
+  String get channelListStandardWarning;
 
   /// No description provided for @currentChannelLabel.
   ///

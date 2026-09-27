@@ -1,6 +1,6 @@
 import '../models/wifi_channel.dart';
 
-enum ChannelListSource { iw, cmdWifi, softApCapability }
+enum ChannelListSource { iw, system, softApCapability, standard }
 
 class ChannelList {
   const ChannelList(this.source, this.channels);

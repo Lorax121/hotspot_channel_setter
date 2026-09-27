@@ -1,6 +1,6 @@
 <div align="center">
   <img src="assets/icon/icon.png" width="128" height="128" alt="App icon">
-  <h1>WiFi Channel Setter</h1>
+  <h1>Hotspot Channel Setter</h1>
   <p>Sets the Wi-Fi hotspot (SoftAP) channel on Android, with Shizuku or root.</p>
   <p><a href="README.md">English</a> | <a href="README.ru.md">Русский</a></p>
 </div>
@@ -20,12 +20,42 @@
 
 ## Requirements
 
-- Android 11 or newer.
 - Shizuku installed and running, or root.
+- Android 12 or newer for Shizuku mode.
+
+## Version support
+
+List and apply were checked on emulators: Android 10, 11, 12, 14, 15, 16 and 17. Android 13 was checked on a real device.
+
+| Android | Shizuku — list | Shizuku — apply | Root — list | Root — apply |
+| :---: | :--- | :---: | :--- | :---: |
+| 10 | not available | — | `iw list` | — |
+| 11 | standard list when the system reports nothing | ✓ | `iw list` | ✓ |
+| 12–17 | system capability | ✓ | `iw list` | ✓ |
+
+Methods the app uses:
+
+**Channel list**
+
+| Method | Mode | Android |
+| :--- | :---: | :---: |
+| System hotspot capability | Shizuku | 12+ |
+| `dumpsys wifi` — `mCurrentSoftApCapability` (second source) | Shizuku, root | 13+ |
+| `iw list` (main source) | root | 10+ |
+| Standard channel list | Shizuku | 11 |
+
+**Apply**
+
+| Method | Mode | Android | Lasts |
+| :--- | :---: | :---: | :--- |
+| Hidden `setSoftApConfiguration` | Shizuku, root | 11+ | after a reboot |
+| `cmd wifi force-softap-channel` | root | 11+ | until a reboot |
+
+On Android 10 the channel cannot be applied: the system API for it does not exist, and `cmd wifi` of that version has neither `force-softap-channel` nor `get-allowed-channel`.
 
 ## How it works
 
-- **Channel list** — the app asks the device itself: `iw list`, `cmd wifi get-allowed-channel` (Android 14 and newer) or the SoftAP capability reported in `dumpsys wifi`. The source in use is shown in the app.
+- **Channel list** — Shizuku mode reads the hotspot capability the system reports (Android 12 and newer), with the framework dump as a second source (Android 13 and newer); on Android 11 it shows the standard list. Root mode uses `iw list` and the dump.
 - **Apply** — the channel is written into the hotspot configuration, which is what the system hotspot uses:
 
   ```text
@@ -44,7 +74,7 @@ cmd wifi force-softap-channel enabled <frequency>
 
 ## Install
 
-Download the APK from the [Releases](https://github.com/Lorax121/hotspot_channel_setter/releases) page. Builds of 1.0.x are signed with a different key, so the old version has to be uninstalled before installing 1.1.0.
+Download the APK from the [Releases](https://github.com/Lorax121/hotspot_channel_setter/releases) page. Builds of 1.0.x are signed with a different key, so the old version has to be uninstalled before installing 1.1.x.
 
 ## Build
 

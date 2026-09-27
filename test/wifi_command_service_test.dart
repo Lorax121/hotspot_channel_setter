@@ -32,6 +32,12 @@ const deviceDumpOutput =
     'SupportedChannelListIn24g[1, 6] SupportedChannelListIn5g[36, 40] '
     'mCountryCodeFromDriverGE';
 
+const standardListOutput = '''
+standard
+Allowed ch in SAP mode:
+2412 2437
+''';
+
 const iwDeniedResult = CommandResult(
   exitCode: 1,
   stdout: '',
@@ -63,11 +69,37 @@ void main() {
 
     final channelList = await service.loadChannels(AccessMode.shizuku);
 
-    expect(channelList.source, ChannelListSource.iw);
+    expect(channelList.source, ChannelListSource.system);
     expect(channelList.channels[1], hasLength(2));
     expect(service.activeBackend, AccessBackend.shizuku);
-    expect(shizuku.iwCalls, 1);
+    expect(shizuku.allowedChannelsCalls, 1);
+    expect(shizuku.iwCalls, 0);
     expect(root.iwCalls, 0);
+  });
+
+  test('marks the standard list on Android 11', () async {
+    final root = FakeBackend(AccessBackend.root);
+    final shizuku = FakeShizukuBackend(
+      const ShizukuStatus(installed: true, running: true, authorized: true),
+      allowedChannelsResult: const CommandResult(
+        exitCode: 0,
+        stdout: standardListOutput,
+        stderr: '',
+      ),
+    );
+    final service = WiFiCommandService(
+      rootBackend: root,
+      shizukuBackend: shizuku,
+    );
+
+    final channelList = await service.loadChannels(AccessMode.shizuku);
+
+    expect(channelList.source, ChannelListSource.standard);
+    expect(channelList.channels[1]!.map((channel) => channel.frequency), [
+      2412,
+      2437,
+    ]);
+    expect(shizuku.softApCapabilityCalls, 0);
   });
 
   test('root mode reads channels through root', () async {
@@ -124,7 +156,7 @@ void main() {
 
     final channelList = await service.loadChannels(AccessMode.shizuku);
 
-    expect(channelList.source, ChannelListSource.cmdWifi);
+    expect(channelList.source, ChannelListSource.system);
     expect(channelList.channels[1]![0].channelNumber, 1);
     expect(channelList.channels[2], hasLength(2));
     expect(service.activeBackend, AccessBackend.shizuku);
@@ -277,7 +309,7 @@ void main() {
   });
 }
 
-class FakeBackend implements WiFiCommandBackend {
+class FakeBackend implements RootBackend {
   FakeBackend(
     this.backend, {
     this.iwResult = const CommandResult(
@@ -308,7 +340,6 @@ class FakeBackend implements WiFiCommandBackend {
     return iwResult;
   }
 
-  @override
   Future<CommandResult> getAllowedChannels() async {
     allowedChannelsCalls++;
     return allowedChannelsResult ??

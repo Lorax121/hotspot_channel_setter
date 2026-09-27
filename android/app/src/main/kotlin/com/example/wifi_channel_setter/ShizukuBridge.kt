@@ -101,7 +101,6 @@ class ShizukuBridge(
                     "sourceDir" to activity.applicationInfo.sourceDir,
                 ),
             )
-            METHOD_GET_IW_LIST -> execute(Operation.GetIwList, result)
             METHOD_GET_ALLOWED_CHANNELS -> execute(Operation.GetAllowedChannels, result)
             METHOD_GET_SOFT_AP_CAPABILITY -> execute(Operation.GetSoftApCapability, result)
             METHOD_GET_SOFT_AP_STATE -> execute(Operation.GetSoftApState, result)
@@ -266,7 +265,6 @@ class ShizukuBridge(
         commandExecutor.execute {
             try {
                 val bundle = when (val operation = pending.operation) {
-                    Operation.GetIwList -> service.getIwList(IW_TIMEOUT_MILLIS)
                     Operation.GetAllowedChannels -> service.getAllowedChannels(
                         IW_TIMEOUT_MILLIS,
                     )
@@ -327,7 +325,6 @@ class ShizukuBridge(
     )
 
     private sealed interface Operation {
-        data object GetIwList : Operation
         data object GetAllowedChannels : Operation
         data object GetSoftApCapability : Operation
         data object GetSoftApState : Operation
@@ -344,7 +341,6 @@ class ShizukuBridge(
         const val METHOD_GET_STATUS = "getStatus"
         const val METHOD_REQUEST_PERMISSION = "requestPermission"
         const val METHOD_GET_APP_INFO = "getAppInfo"
-        const val METHOD_GET_IW_LIST = "getIwList"
         const val METHOD_GET_ALLOWED_CHANNELS = "getAllowedChannels"
         const val METHOD_GET_SOFT_AP_CAPABILITY = "getSoftApCapability"
         const val METHOD_GET_SOFT_AP_STATE = "getSoftApState"

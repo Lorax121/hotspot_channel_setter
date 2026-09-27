@@ -5,8 +5,6 @@ import android.os.Bundle;
 interface IShizukuUserService {
     void destroy() = 16777114;
 
-    Bundle getIwList(long timeoutMillis) = 1;
-
     Bundle getAllowedChannels(long timeoutMillis) = 3;
 
     Bundle getSoftApCapability(long timeoutMillis) = 6;

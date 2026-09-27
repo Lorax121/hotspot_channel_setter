@@ -26,6 +26,8 @@ abstract interface class ShizukuBackend implements WiFiCommandBackend {
   Future<ShizukuStatus> getStatus();
 
   Future<bool> requestPermission();
+
+  Future<CommandResult> getAllowedChannels();
 }
 
 class ShizukuCommandBackend implements ShizukuBackend {
@@ -67,9 +69,6 @@ class ShizukuCommandBackend implements ShizukuBackend {
       throw const WiFiCommandException(WiFiCommandErrorType.shizukuUnsupported);
     }
   }
-
-  @override
-  Future<CommandResult> getIwList() => _invoke('getIwList');
 
   @override
   Future<CommandResult> getAllowedChannels() => _invoke('getAllowedChannels');
