@@ -33,6 +33,8 @@ List and apply were checked on emulators: Android 10, 11, 12, 14, 15, 16 and 17.
 | 11 | standard list when the system reports nothing | ✓ | `iw list` | ✓ |
 | 12–17 | system capability | ✓ | `iw list` | ✓ |
 
+**If the channel list is missing in Shizuku mode right after a reboot**, start the hotspot once — some devices report the hotspot capabilities only after the hotspot has been running. Then press the refresh button next to the current channel.
+
 Methods the app uses:
 
 **Channel list**
